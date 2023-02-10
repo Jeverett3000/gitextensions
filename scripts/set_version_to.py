@@ -4,6 +4,7 @@
 """Update version in GitExtension source files
 """
 
+
 import argparse, sys
 import glob
 import re
@@ -15,14 +16,13 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--text', default=None,
                        help='text product version')
     args = parser.parse_args()
-    
+
     if not args.version:
         parser.print_help()
         exit(1)
 
-    m = re.match("(\d+\.\d+)", args.version)
-    if m:
-        short_version = m.group(1)
+    if m := re.match("(\d+\.\d+)", args.version):
+        short_version = m[1]
     else:
         parser.print_help()
         exit(1)
@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     if not args.text:
       args.text = args.version
-    
+
     submodules = glob.glob("..\Externals\**\AssemblyInfo.cs", recursive=True)
     filenames = [ "..\CommonAssemblyInfo.cs", "..\CommonAssemblyInfoExternals.cs" ]
     combined = filenames + submodules
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             o += line
         outfile = open(filename, "w")
         outfile.writelines(o)
-    
+
     filename = "..\GitExtensionsShellEx\GitExtensionsShellEx.rc"
     gitExtensionsShellEx = open(filename, "r").readlines()
     o = ""
@@ -76,12 +76,12 @@ if __name__ == '__main__':
             line = ', '.join(data)
         elif line.find('"ProductVersion"') != -1:
             data = line.split(', ', 1)
-            data[1] = '"' + args.text + '"\n'
+            data[1] = f'"{args.text}' + '"\n'
             line = ', '.join(data)
         o += line
     outfile = open(filename, "w")
     outfile.writelines(o)
-    
+
     filename = "..\GitExtSshAskPass\SshAskPass.rc2"
     gitExtSshAskPass = open(filename, "r").readlines()
     o = ""
@@ -101,7 +101,7 @@ if __name__ == '__main__':
             line = ', '.join(data)
         elif line.find('"ProductVersion"') != -1:
             data = line.split(', ', 1)
-            data[1] = '"' + args.text + '"\n'
+            data[1] = f'"{args.text}' + '"\n'
             line = ', '.join(data)
         o += line
     outfile = open(filename, "w")
@@ -109,4 +109,4 @@ if __name__ == '__main__':
 
     for i in range(1, len(verSplitted)):
         if len(verSplitted[i]) == 1:
-            verSplitted[i] = "0" + verSplitted[i]
+            verSplitted[i] = f"0{verSplitted[i]}"
